@@ -146,7 +146,7 @@ async function setStream () {
 
 ### 5. Handle the initial case
 
-If the user has previously granted permission, we can request access immediately. We'll need to be aware that device preferences are recalled when the `select` element is initially rendered. To ensure the correct device is requested, we'll need to wait for the `select` to be ready. So putting this al together:
+If the user has previously granted permission, we can request access immediately. We'll need to be aware that device preferences are recalled when the `select` element is initially rendered. To ensure the correct device is requested, we'll need to wait for the `select` to be ready. So putting this all together:
 
 ```js
 let stream
