@@ -22,32 +22,45 @@
       }
     </style>
     <script src="//unpkg.com/@ungap/custom-elements"></script>
-    <script src="/siphon-select.js" type="module" defer></script>
+    <script src="/siphon-select.js"></script>
   </head>
   <body>
     <h1>Siphon Select Demo</h1>
     <select is="siphon-select" data-type="audioinput"></select>
     <button id="enable">Enable</button>
 
-    <script id="script" type="module">
-      let stream
-      const select = document.querySelector('[is=siphon-select]')
-      const enable = document.getElementById('enable')
+    <script>
+      ;(async function () {
+        let stream
+        const select = document.querySelector('[is=siphon-select]')
+        const enable = document.getElementById('enable')
 
-      enable.onclick = async function () {
-        await setStream({ audio: true })
-        await select.render()
-        select.setValueFromStream(stream)
-      }
+        // If permission is granted, access the stream straightaway
+        if (await select.permissionGranted) setStream()
 
-      select.onchange = function () {
-        setStream({ audio: { deviceId: select.value } })
-      }
+        // Request access to stream, re-render once access is granted (and labels are available), then set the value
+        enable.onclick = async function () {
+          await setStream()
+          await select.render()
+          select.setValueFromStream(stream)
+        }
 
-      async function setStream (constraints) {
-        if (stream) stream.getTracks().forEach(track => track.stop())
-        stream = await navigator.mediaDevices.getUserMedia(constraints)
-      }
+        // When the choice changes, update the stream
+        select.onchange = function () {
+          setStream()
+        }
+
+        async function setStream () {
+          // End an existing stream
+          if (stream) stream.getTracks().forEach(track => track.stop())
+
+          // Ensure select has been initialized and any recalled preferences have been set
+          await select.ready
+          stream = await navigator.mediaDevices.getUserMedia({
+            audio: { deviceId: select.value }
+          })
+        }
+      })()
     </script>
   </body>
 </html>
