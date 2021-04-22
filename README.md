@@ -23,6 +23,30 @@ Include `siphon-select.js` in your project, then render a `select` element, addi
 
 ## API
 
+### `ready`
+
+A `Promise` that resolves when the component has connected, initially rendered, and any recalled preferences have been set. It's important to wait for this to resolve if you're retrieving a value shortly after the element is rendered. For example, to immediately access a stream if permission is already granted:
+
+```js
+let stream
+const select = document.querySelector('[is="siphon-select"]')
+
+if (await select.permissionGranted) {
+  await select.ready
+  stream = await navigator.mediaDevices.getUserMedia({
+    audio: { deviceId: select.value }
+  })
+}
+```
+
+### `permissionGranted`
+
+A `Promise` that resolves to `true` or `false` depending on whether permission has been granted i.e. if the labels for a given media type have labels.
+
+### `data-permission-granted` Attribute
+
+The `data-permission-granted` is added if `siphon-select` can determine whether permission has been granted (see above).
+
 ### `render()`
 
 Calling `render` will update the options with labels, as well as adding the `data-permission-granted` (if applicable). `render` is typically called after the initial call to `navigator.mediaDevices.getUserMedia(…)`.
