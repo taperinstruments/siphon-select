@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Siphon Select Demo</title>
+
+    <style>
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      }
+      [is="siphon-select"] {
+        display: none;
+      }
+      [is="siphon-select"][data-permission-granted] {
+        display: block;
+      }
+      [is="siphon-select"][data-permission-granted] ~ #enable {
+        display: none;
+      }
+    </style>
+    <script src="//unpkg.com/@ungap/custom-elements"></script>
+    <script src="/siphon-select.js" type="module" defer></script>
+  </head>
+  <body>
+    <h1>Siphon Select Demo</h1>
+    <select is="siphon-select" data-type="audioinput"></select>
+    <button id="enable">Enable</button>
+
+    <script id="script" type="module">
+      let stream
+      const select = document.querySelector('[is=siphon-select]')
+      const enable = document.getElementById('enable')
+
+      enable.onclick = async function () {
+        await setStream({ audio: true })
+        await select.render()
+        select.setValueFromStream(stream)
+      }
+
+      select.onchange = function () {
+        setStream({ audio: { deviceId: select.value } })
+      }
+
+      async function setStream (constraints) {
+        if (stream) stream.getTracks().forEach(track => track.stop())
+        stream = await navigator.mediaDevices.getUserMedia(constraints)
+      }
+    </script>
+  </body>
+</html>
