@@ -92,7 +92,7 @@
       const value = this.value
       Array.from(this.options).forEach(o => o.remove())
       await this.render()
-      this.value = value
+      if (value) this.value = value
     }
 
     findOrCreateOption (device) {
