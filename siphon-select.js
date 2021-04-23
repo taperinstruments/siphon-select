@@ -58,9 +58,7 @@
     setValueFromLabel (label) {
       const options = Array.from(this.options)
       const option = options.find(o => o.textContent === label)
-      if (option && !option.selected) {
-        options.forEach(o => { o.selected = (o === option) })
-      }
+      if (option && !option.selected) this.value = option.value
     }
 
     get mediaType () {
