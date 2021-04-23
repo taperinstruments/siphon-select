@@ -75,7 +75,7 @@
       }[this.mediaType]()
     }
 
-    async render (options = {}) {
+    async render () {
       const value = this.value
 
       const devices = await this.devices
@@ -83,7 +83,7 @@
         if (device.deviceId) {
           const option = this.findOrCreateOption(device)
           option.textContent = deviceLabel(device, i)
-          option.selected = (device.label === options.selected) || device.deviceId === value
+          option.selected = device.deviceId === value
         }
       })
 
@@ -94,9 +94,9 @@
       }
     }
 
-    reRender (options) {
+    reRender () {
       Array.from(this.options).forEach(o => o.remove())
-      this.render(options)
+      this.render()
     }
 
     findOrCreateOption (device) {
