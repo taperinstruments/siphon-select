@@ -36,7 +36,9 @@
         const enable = document.getElementById('enable')
 
         // If permission is granted, access the stream straightaway
-        if (await select.permissionGranted) setStream()
+        select.addEventListener('ready', async function () {
+          if (await select.permissionGranted) setStream()
+        })
 
         // Request access to stream, re-render once access is granted (and labels are available), then set the value
         enable.onclick = async function () {
@@ -54,8 +56,6 @@
           // End an existing stream
           if (stream) stream.getTracks().forEach(track => track.stop())
 
-          // Ensure select has been initialized and any recalled preferences have been set
-          await select.ready
           stream = await navigator.mediaDevices.getUserMedia({
             audio: { deviceId: select.value }
           })

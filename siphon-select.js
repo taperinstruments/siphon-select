@@ -31,8 +31,6 @@
   class SiphonSelect extends HTMLSelectElement {
     constructor () {
       super()
-      this.ready = new Promise((resolve) => this._ready = resolve)
-
       this._ondevicechange = () => this.reRender()
       navigator.mediaDevices.addEventListener('devicechange', this._ondevicechange)
       this._onchange = () => this.persist()
@@ -42,7 +40,7 @@
     async connectedCallback () {
       await this.render()
       if (await this.permissionGranted) this.setValueFromPreferences()
-      this._ready()
+      this.dispatch('ready')
     }
 
     setValueFromStream (stream) {
@@ -121,6 +119,12 @@
         videoinput: PREFERRED_VIDEO_INPUT_LABEL
       }
       localStorage.setItem(kinds[this.mediaType], label)
+    }
+
+    dispatch (eventName, { detail = {}, bubbles = true, cancelable = false } = {}) {
+      const event = new CustomEvent(eventName, { detail, bubbles, cancelable })
+      this.dispatchEvent(event)
+      return event
     }
 
     disconnectedCallback () {
