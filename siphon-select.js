@@ -31,7 +31,10 @@
   class SiphonSelect extends HTMLSelectElement {
     constructor () {
       super()
-      this._ondevicechange = () => this.reRender()
+      this._ondevicechange = async () => {
+        await this.reRender()
+        if (!this.value) this.selectFirst()
+      }
       navigator.mediaDevices.addEventListener('devicechange', this._ondevicechange)
       this._onchange = () => this.persist()
       this.addEventListener('change', this._onchange)
@@ -91,6 +94,13 @@
       Array.from(this.options).forEach(o => o.remove())
       await this.render()
       if (value) this.value = value
+    }
+
+    selectFirst () {
+      if (this.options[0] && !this.options[0].selected) {
+        this.options[0].selected = true
+        this.dispatch('change')
+      }
     }
 
     findOrCreateOption (device) {
